@@ -1,0 +1,53 @@
+# Canonical export defaults live here.
+# Control figure size, export DPI, export format, and save behavior from this file.
+# This style requires a working LaTeX runtime with lmodern and siunitx.
+# Write labels in LaTeX-compatible strings and wrap units in square brackets.
+
+figure.figsize : 4.72, 3.94
+figure.dpi : 100
+figure.facecolor : white
+
+savefig.format : tiff
+savefig.dpi : 300
+savefig.facecolor : white
+savefig.bbox : standard
+savefig.pad_inches : 0.0
+
+font.size : 10
+font.family : Times New Roman
+text.usetex : True
+text.latex.preamble : \usepackage{lmodern}\usepackage{siunitx}
+
+axes.titlesize : 11
+axes.labelsize : 10
+xtick.labelsize : 9
+ytick.labelsize : 9
+legend.fontsize : 9
+
+axes.linewidth : 1.0
+axes.grid : False
+axes.facecolor : white
+axes.titlepad : 6.0
+axes.labelpad : 4.0
+
+xtick.direction : in
+ytick.direction : in
+xtick.major.size : 4.0
+ytick.major.size : 4.0
+xtick.minor.visible : True
+ytick.minor.visible : True
+
+lines.linewidth : 1.5
+lines.markersize : 5.0
+lines.solid_capstyle : round
+lines.dash_capstyle : round
+
+legend.frameon : False
+legend.handlelength : 2.0
+legend.borderaxespad : 0.3
+
+grid.linewidth : 0.6
+grid.alpha : 0.5
+
+mathtext.default : regular
+image.interpolation : none

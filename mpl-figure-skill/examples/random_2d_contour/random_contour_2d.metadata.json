@@ -1,0 +1,22 @@
+{
+  "plot_data_source_paths": [
+    "examples/random_2d_contour/random_contour_data.csv"
+  ],
+  "figure_creation_timestamp": "2026-04-04T10:33:31.610999+00:00",
+  "image_type": "2D contour",
+  "image_dimensions": "4.72 in x 3.94 in",
+  "mpl_style_path": "skills/mpl-figure-generator/assets/styles/mps_base.mplstyle",
+  "fullstyle_path_or_spec": "None beyond the canonical mplstyle manager.",
+  "element_formatting_spec": "Filled triangulated contour using the jet colormap with 16 levels, thin black contour lines, and LaTeX field-name labels.",
+  "output_basename": "random_contour_2d",
+  "output_figure_path": "examples/random_2d_contour/random_contour_2d.tiff",
+  "export_format": "tiff",
+  "export_dpi": 300,
+  "row_count": 252,
+  "x_field": "x",
+  "y_field": "y",
+  "z_field": "z",
+  "colormap_name": "jet",
+  "contour_level_count": 16,
+  "random_seed": 20260404
+}

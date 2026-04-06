@@ -1,0 +1,19 @@
+{
+  "plot_data_source_paths": [
+    "examples/random_2d_line/random_line_data.csv"
+  ],
+  "figure_creation_timestamp": "2026-04-04T10:15:47.514809+00:00",
+  "image_type": "2D Line",
+  "image_dimensions": "4.72 in x 3.94 in",
+  "mpl_style_path": "skills/mpl-figure-generator/assets/styles/mps_base.mplstyle",
+  "fullstyle_path_or_spec": "None beyond the canonical mplstyle manager.",
+  "element_formatting_spec": "Single series using a solid #0f4c81 line with linewidth 2.0 and LaTeX-rendered labels with square-bracketed units.",
+  "output_basename": "random_line_2d",
+  "output_figure_path": "examples/random_2d_line/random_line_2d.tiff",
+  "export_format": "tiff",
+  "export_dpi": 300,
+  "row_count": 120,
+  "x_field": "x",
+  "y_field": "y",
+  "random_seed": 20260404
+}

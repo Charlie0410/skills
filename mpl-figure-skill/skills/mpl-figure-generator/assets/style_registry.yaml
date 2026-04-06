@@ -1,0 +1,84 @@
+version: 2
+canonical_style_manager: assets/styles/mps_base.mplstyle
+
+runtime_requirements:
+  - latex on PATH
+  - pdflatex on PATH
+  - LaTeX package lmodern
+  - LaTeX package siunitx
+
+plot_type_aliases:
+  2D Line:
+    - 2D Line
+    - line
+    - line plot
+  2D Symbol:
+    - 2D Symbol
+    - symbol
+    - scatter
+    - symbol/scatter
+  2D contour:
+    - 2D contour
+    - contour
+    - contour plot
+  Polar Plot:
+    - Polar Plot
+    - polar
+    - polar plot
+
+required_fields:
+  common:
+    - DATA_FILE_PATHS
+    - DATA_STRUCTURE_DESCRIPTION
+    - IMAGE_TYPE
+  contour_only:
+    - COLORMAP_NAME
+
+optional_fields:
+  - DATA_CREATION_INSTRUCTIONS
+  - MPL_STYLE_PATH
+  - ELEMENT_FORMATTING_SPEC
+  - ADDITIONAL_IMAGE_SPECIFICATIONS
+  - OUTPUT_BASENAME
+  - SAMPLE_ROWS_OR_SCHEMA_SNIPPETS
+
+style_owned_defaults:
+  - figure.figsize
+  - savefig.dpi
+  - savefig.format
+  - savefig.bbox
+  - savefig.pad_inches
+  - font.family
+  - text.usetex
+
+label_rules:
+  - Use LaTeX-compatible strings for labels, legends, and colorbars when they are present.
+  - Put units in square brackets.
+  - Prefer \mathrm{} for textual label content inside math mode.
+
+plot_specific_notes:
+  2D Line:
+    - Require explicit x and y field mapping.
+    - Require grouping semantics only when multiple series exist.
+    - Do not invent legend labels.
+  2D Symbol:
+    - Require explicit x and y field mapping.
+    - Require marker semantics and optional size or color encodings.
+    - Do not infer point categories.
+  2D contour:
+    - Require explicit x, y, and z semantics.
+    - Require explicit contour level policy if supplied by the user.
+    - Require explicit colormap name.
+  Polar Plot:
+    - Require explicit theta and radius mapping.
+    - Require angular unit note if the data are in degrees.
+    - Require theta-zero location or orientation rules when relevant.
+
+forbidden_inference:
+  - schema details
+  - file paths
+  - output basenames
+  - label text
+  - label units
+  - legend labels
+  - colormap names
