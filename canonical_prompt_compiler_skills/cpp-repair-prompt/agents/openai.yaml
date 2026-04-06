@@ -1,0 +1,4 @@
+interface:
+  display_name: "CPP Repair"
+  short_description: "Repair verified CPP draft prompts"
+  default_prompt: "Use $cpp-repair-prompt to apply bounded REPAIR-stage fixes to this verified CPP draft prompt."

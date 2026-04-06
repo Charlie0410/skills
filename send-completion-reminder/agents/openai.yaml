@@ -1,0 +1,4 @@
+interface:
+  display_name: "Completion Reminder"
+  short_description: "Send email after work completes"
+  default_prompt: "Use $send-completion-reminder so the task runs normally and sends an email reminder only after completion."

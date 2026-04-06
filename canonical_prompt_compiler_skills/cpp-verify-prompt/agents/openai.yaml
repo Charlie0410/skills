@@ -1,0 +1,4 @@
+interface:
+  display_name: "CPP Verify"
+  short_description: "Verify compiled CPP prompts"
+  default_prompt: "Use $cpp-verify-prompt to verify whether this compiled CPP draft prompt still matches the source spec and protocol grammar."

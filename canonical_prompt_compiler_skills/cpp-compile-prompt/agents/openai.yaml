@@ -1,0 +1,4 @@
+interface:
+  display_name: "CPP Compile"
+  short_description: "Compile CPP specs into prompts"
+  default_prompt: "Use $cpp-compile-prompt to compile this CPP NORMALIZED_SPEC or SOURCE_SPEC into COMPILE-stage artifacts."
