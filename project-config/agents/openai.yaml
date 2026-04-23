@@ -1,0 +1,4 @@
+interface:
+  display_name: "Project Config"
+  short_description: "Manage local project config"
+  default_prompt: "Use $project-config to create, update, dry-run, or validate project-local TOML config without writing global config."
