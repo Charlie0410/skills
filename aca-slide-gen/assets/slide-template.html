@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{{section_title}} | {{topic}}</title>
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: #f3f3f3;
+    }
+    body {
+      font-family: Calibri, Arial, sans-serif;
+    }
+    .slide {
+      width: 1600px;
+      height: 900px;
+      aspect-ratio: 16 / 9;
+      box-sizing: border-box;
+      margin: 0 auto;
+      background: #ffffff;
+      color: #111111;
+      overflow: hidden;
+      padding: 46px 58px 44px;
+    }
+    :lang(zh), .zh {
+      font-family: "微软雅黑", "Microsoft YaHei", sans-serif;
+    }
+    :lang(en), .en {
+      font-family: Calibri, Arial, sans-serif;
+    }
+    .section-title {
+      font-size: 30px;
+      font-weight: 700;
+      letter-spacing: 0.2px;
+      line-height: 1.15;
+    }
+    .title-rule {
+      height: 2px;
+      background: #1f2937;
+      margin: 14px 0 28px;
+    }
+    .topic {
+      font-size: 34px;
+      font-weight: 700;
+      line-height: 1.16;
+      margin: 0 0 20px;
+    }
+    .grid-2x2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      grid-template-rows: 1fr 1fr;
+      gap: 22px;
+      height: 720px;
+    }
+    .grid-2xn {
+      display: grid;
+      grid-template-rows: minmax(0, 1.2fr) minmax(0, 0.8fr);
+      gap: 18px;
+      height: 720px;
+    }
+    .grid-2xn .row {
+      display: grid;
+      grid-template-columns: repeat(var(--cols, 4), minmax(0, 1fr));
+      gap: 18px;
+    }
+    .panel {
+      border: 1px solid #d7dde8;
+      border-radius: 12px;
+      padding: 18px;
+      box-sizing: border-box;
+      background: #ffffff;
+      overflow: hidden;
+    }
+    .panel h2 {
+      font-size: 26px;
+      line-height: 1.18;
+      margin: 0 0 12px;
+    }
+    .panel p, .panel li {
+      font-size: 22px;
+      line-height: 1.28;
+    }
+    .caption {
+      background: #ffc000;
+      color: #000000;
+      font-size: 20px;
+      font-weight: 700;
+      line-height: 1.15;
+      padding: 6px 10px;
+      border-radius: 6px;
+      display: inline-block;
+    }
+    .em-blue { color: #0000AA; }
+    .em-red { color: #DE0000; }
+    .formula {
+      font-family: Cambria Math, "Times New Roman", serif;
+      white-space: pre-wrap;
+      font-size: 24px;
+      line-height: 1.25;
+    }
+    .placeholder {
+      display: grid;
+      place-items: center;
+      height: 100%;
+      min-height: 180px;
+      border: 2px dashed #b8c0cf;
+      border-radius: 10px;
+      color: #4b5563;
+      text-align: center;
+      padding: 18px;
+      box-sizing: border-box;
+      background: #f8fafc;
+    }
+  </style>
+</head>
+<body>
+  <main class="slide" role="document" aria-label="Academic presentation slide">
+    <header>
+      <div class="section-title">{{section_title}}</div>
+      <div class="title-rule" aria-hidden="true"></div>
+    </header>
+    <section aria-label="Slide content">
+      <h1 class="topic">{{topic}}</h1>
+      {{content}}
+    </section>
+  </main>
+</body>
+</html>
