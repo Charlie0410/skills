@@ -1,6 +1,25 @@
 version: 2
 canonical_style_manager: assets/styles/mps_base.mplstyle
 
+scienceplots_bundle:
+  source_project: SciencePlots
+  source_url: https://github.com/garrettj403/SciencePlots
+  license: MIT
+  license_file: assets/styles/scienceplots/SCIENCEPLOTS_LICENSE.txt
+  manifest: assets/styles/scienceplots/style_manifest.csv
+
+style_selection:
+  default_chain:
+    - assets/styles/mps_base.mplstyle
+  registered_preset_field: MPL_STYLE_PRESET
+  registered_chain_field: MPL_STYLE_CHAIN
+  explicit_path_field: MPL_STYLE_PATH
+  path_conflict_policy: Do not combine MPL_STYLE_PATH with MPL_STYLE_PRESET or MPL_STYLE_CHAIN unless the user explicitly rewrites the request as an ordered MPL_STYLE_CHAIN.
+  chain_resolution:
+    - No style field loads only the canonical style manager.
+    - MPL_STYLE_PRESET loads the canonical style manager, then the registered preset.
+    - MPL_STYLE_CHAIN loads the canonical style manager, then each registered preset in user order.
+
 runtime_requirements:
   - latex on PATH
   - pdflatex on PATH
@@ -11,6 +30,20 @@ runtime_defaults:
   RUN_MODE: production
   DEBUG_VERBOSITY: 2
 
+export_rules:
+  tiff_lzw_compression:
+    extensions:
+      - .tif
+      - .tiff
+    effective_formats:
+      - tif
+      - tiff
+    pil_kwargs:
+      compression: tiff_lzw
+    metadata_field: export_compression
+    metadata_value: tiff_lzw
+    fallback_policy: Stop and report the missing TIFF LZW capability; do not save an uncompressed TIFF.
+
 run_mode_values:
   production:
     description: Save the clean finished figure and companion metadata only.
@@ -19,11 +52,19 @@ run_mode_values:
 
 debug_verbosity_levels:
   1:
+    - complete visible semantic object coverage
     - element ID
     - element type
+    - parent object
+    - visible flag
+    - concise semantic role
   2:
+    - complete visible semantic object coverage
     - element ID
     - element type
+    - parent object
+    - visible flag
+    - concise semantic role
     - text or label
     - color
     - linewidth
@@ -33,8 +74,12 @@ debug_verbosity_levels:
     - alpha
     - axes association
   3:
+    - complete visible semantic object coverage
     - element ID
     - element type
+    - parent object
+    - visible flag
+    - concise semantic role
     - text or label
     - color
     - linewidth
@@ -43,12 +88,77 @@ debug_verbosity_levels:
     - colormap
     - alpha
     - axes association
+    - dense small-font debug-image callouts
+    - figure-fraction anchor or center
+    - axes-fraction position when applicable
+    - data position or extents when applicable
+    - bbox or extents
     - position or extents
     - z-order
     - transform and layout notes
+    - reference guide overlays
     - contour levels or counts
+    - legend entry details
     - collection sizes
     - colorbar or mappable details
+    - grouped low-level member summaries
+
+debug_coverage_policy:
+  coverage: all_visible_semantic_objects
+  verbosity_controls: attribute_depth_and_debug_image_density
+  metadata_is_complete_source_of_truth: true
+  annotated_image_policy: Label main semantic objects at levels 1 and 2; label semantic objects and grouped low-level categories with small zoom-friendly callouts at level 3.
+  absent_category_policy: Record common absent categories in debug_coverage_summary; do not invent placeholder objects.
+  fallback_id_pattern: artist_<n>
+  level3_density_policy:
+    image_coverage: semantic_objects_and_grouped_low_level_categories
+    repeated_artist_default: group_repeated_low_level_artists
+    per_artist_exception: Add per-member IDs only when needed to make follow-up edits unambiguous.
+    zoom_expected: true
+  required_visible_categories:
+    - figure
+    - axes
+    - titles
+    - axis_labels
+    - legends
+    - legend_entries
+    - colorbars
+    - colorbar_labels
+    - line_series
+    - scatter_groups
+    - contour_fills
+    - contour_lines
+    - images
+    - patches
+    - annotations
+    - free_text
+    - tick_labels
+    - tick_lines
+    - grid_lines
+    - spines
+    - reference_lines
+    - unclassified_visible_artists
+  grouping_policy:
+    repeated_low_level_objects: Group semantically in metadata without omitting them.
+    per_member_ids: Use only when needed to make follow-up edits unambiguous.
+    grouped_examples:
+      x_tick_labels:
+        record:
+          - count
+          - label text
+          - font properties when available
+      grid_lines:
+        record:
+          - count
+          - axis association
+          - color
+          - linewidth
+          - linestyle
+      spines:
+        record:
+          - visible sides
+          - color
+          - linewidth
 
 debug_output_rules:
   debug_filename_pattern: <OUTPUT_BASENAME>.debug.<style_format>
@@ -59,36 +169,138 @@ debug_output_rules:
   annotation_style:
     - high-contrast callout boxes
     - connector lines
-  grouping_default:
-    - ticks
-    - tick labels
-    - grid lines
-    - spines
-    - contour polygons
+  annotated_image_full_coverage: false
+  metadata_full_coverage: true
+  level3_position_overlay:
+    font_policy: small_zoom_friendly
+    reference_guides:
+      - figure fraction grid at 0, 0.25, 0.5, 0.75, and 1
+      - axes bounding boxes
+      - axes center and corner reference points
+      - anchor points for labeled objects
+      - connector lines from labels to anchors or bboxes
+    callout_fields:
+      - stable ID
+      - element type
+      - parent axes or figure
+      - figure-fraction anchor or center
+      - axes-fraction position when applicable
+      - data position or data extents when applicable
+      - bbox or extents
+      - transform shorthand
+      - z-order
+      - grouped count, levels, or entries when applicable
 
 debug_element_ids:
   - figure
   - main_axes
+  - axes_2
   - x_label
   - y_label
+  - z_label
   - title
+  - subtitle
   - legend
+  - legend_title
+  - legend_entry_1
   - colorbar
   - colorbar_label
+  - colorbar_tick_labels
   - series_1
   - scatter_1
   - contour_fill
   - contour_lines
+  - contour_labels
+  - image_1
+  - patch_1
+  - reference_line_1
   - annotation_1
+  - text_1
+  - x_tick_labels
+  - y_tick_labels
+  - x_tick_lines
+  - y_tick_lines
+  - grid_lines
+  - spines
+  - artist_1
 
 metadata_fields:
   production:
     - run_mode
+    - style_chain
+    - style_paths
+    - registered_style_preset
+    - export_compression
   debug:
     - run_mode
+    - style_chain
+    - style_paths
+    - registered_style_preset
+    - export_compression
     - debug_verbosity
     - debug_figure_path
     - debug_elements
+    - debug_object_count
+    - debug_coverage_summary
+    - debug_unclassified_artists
+
+registered_style_presets:
+  science:
+    category: base
+    path: assets/styles/scienceplots/science.mplstyle
+    description: General SciencePlots base style with compact scientific plotting defaults.
+  scatter:
+    category: base
+    path: assets/styles/scienceplots/scatter.mplstyle
+    description: Marker and color cycle overlay for scatter-style plots.
+  notebook:
+    category: base
+    path: assets/styles/scienceplots/notebook.mplstyle
+    description: Larger notebook-oriented figure and tick defaults.
+  ieee:
+    category: journals
+    path: assets/styles/scienceplots/journals/ieee.mplstyle
+    description: IEEE-oriented sizing and monochrome-friendly color and linestyle cycle.
+  nature:
+    category: journals
+    path: assets/styles/scienceplots/journals/nature.mplstyle
+    description: Nature-oriented compact journal sizing and typography.
+  bright:
+    category: color
+    path: assets/styles/scienceplots/color/bright.mplstyle
+    description: Bright qualitative color cycle.
+  high-contrast:
+    category: color
+    path: assets/styles/scienceplots/color/high-contrast.mplstyle
+    description: Short high-contrast qualitative color cycle.
+  high-vis:
+    category: color
+    path: assets/styles/scienceplots/color/high-vis.mplstyle
+    description: High-visibility color and linestyle cycle.
+  light:
+    category: color
+    path: assets/styles/scienceplots/color/light.mplstyle
+    description: Light qualitative color cycle.
+  muted:
+    category: color
+    path: assets/styles/scienceplots/color/muted.mplstyle
+    description: Muted qualitative color cycle.
+  retro:
+    category: color
+    path: assets/styles/scienceplots/color/retro.mplstyle
+    description: Retro qualitative color cycle.
+  std-colors:
+    category: color
+    path: assets/styles/scienceplots/color/std-colors.mplstyle
+    description: SciencePlots standard qualitative color cycle.
+  vibrant:
+    category: color
+    path: assets/styles/scienceplots/color/vibrant.mplstyle
+    description: Vibrant qualitative color cycle.
+  no-latex:
+    category: misc
+    path: assets/styles/scienceplots/misc/no-latex.mplstyle
+    description: Disables text.usetex for environments without LaTeX.
 
 plot_type_aliases:
   2D Line:
@@ -120,6 +332,8 @@ required_fields:
 optional_fields:
   - DATA_CREATION_INSTRUCTIONS
   - MPL_STYLE_PATH
+  - MPL_STYLE_PRESET
+  - MPL_STYLE_CHAIN
   - ELEMENT_FORMATTING_SPEC
   - ADDITIONAL_IMAGE_SPECIFICATIONS
   - OUTPUT_BASENAME

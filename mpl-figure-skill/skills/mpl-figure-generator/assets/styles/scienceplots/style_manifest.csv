@@ -1,0 +1,15 @@
+style,category,source_path,bundled_path,note
+science,base,science.mplstyle,science.mplstyle,General SciencePlots base style.
+scatter,base,scatter.mplstyle,scatter.mplstyle,Marker and color cycle for scatter-style plots.
+notebook,base,notebook.mplstyle,notebook.mplstyle,Larger notebook-oriented figure defaults.
+ieee,journals,journals/ieee.mplstyle,journals/ieee.mplstyle,IEEE-oriented sizing and monochrome-friendly cycle.
+nature,journals,journals/nature.mplstyle,journals/nature.mplstyle,Nature-oriented compact journal sizing.
+bright,color,color/bright.mplstyle,color/bright.mplstyle,Bright qualitative color cycle.
+high-contrast,color,color/high-contrast.mplstyle,color/high-contrast.mplstyle,Short high-contrast qualitative color cycle.
+high-vis,color,color/high-vis.mplstyle,color/high-vis.mplstyle,High-visibility color and linestyle cycle.
+light,color,color/light.mplstyle,color/light.mplstyle,Light qualitative color cycle.
+muted,color,color/muted.mplstyle,color/muted.mplstyle,Muted qualitative color cycle.
+retro,color,color/retro.mplstyle,color/retro.mplstyle,Retro qualitative color cycle.
+std-colors,color,color/std-colors.mplstyle,color/std-colors.mplstyle,SciencePlots standard qualitative color cycle.
+vibrant,color,color/vibrant.mplstyle,color/vibrant.mplstyle,Vibrant qualitative color cycle.
+no-latex,misc,misc/no-latex.mplstyle,misc/no-latex.mplstyle,Disables text.usetex for environments without LaTeX.

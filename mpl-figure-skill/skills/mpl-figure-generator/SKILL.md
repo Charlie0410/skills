@@ -17,6 +17,8 @@ Treat `assets/styles/mps_base.mplstyle` as the default source of truth for:
 6. Font family
 7. LaTeX text rendering
 
+TIFF export compression is a mandatory export-layer rule, not an mplstyle setting. Any generated `.tif` or `.tiff` production or debug artifact must be saved with Pillow LZW compression through Matplotlib `savefig` `pil_kwargs`.
+
 Create or update the figure output, any helper script needed for repeatability, the data file when the user explicitly asks for synthetic or demo data, and a companion metadata JSON file.
 
 ## Prerequisites
@@ -27,6 +29,7 @@ Create or update the figure output, any helper script needed for repeatability, 
 4. Require the LaTeX packages `lmodern` and `siunitx`.
 5. Stop and report the missing prerequisite if the canonical style cannot run as configured. Do not silently disable LaTeX.
 6. Use the existing repository layout unless the user explicitly asks for a different placement.
+7. For TIFF output, require a Matplotlib/Pillow TIFF writer that accepts `pil_kwargs={"compression": "tiff_lzw"}`. Stop and report the missing TIFF LZW capability instead of saving an uncompressed TIFF.
 
 ## Runtime inputs
 
@@ -44,12 +47,14 @@ Optional fields:
 
 1. `DATA_CREATION_INSTRUCTIONS`
 2. `MPL_STYLE_PATH`
-3. `ELEMENT_FORMATTING_SPEC`
-4. `ADDITIONAL_IMAGE_SPECIFICATIONS`
-5. `OUTPUT_BASENAME`
-6. `SAMPLE_ROWS_OR_SCHEMA_SNIPPETS`
-7. `RUN_MODE`
-8. `DEBUG_VERBOSITY`
+3. `MPL_STYLE_PRESET`
+4. `MPL_STYLE_CHAIN`
+5. `ELEMENT_FORMATTING_SPEC`
+6. `ADDITIONAL_IMAGE_SPECIFICATIONS`
+7. `OUTPUT_BASENAME`
+8. `SAMPLE_ROWS_OR_SCHEMA_SNIPPETS`
+9. `RUN_MODE`
+10. `DEBUG_VERBOSITY`
 
 Runtime mode fields:
 
@@ -60,6 +65,7 @@ Runtime mode fields:
 5. `DEBUG_VERBOSITY` is used only when `RUN_MODE` is `debug`.
 6. Valid `DEBUG_VERBOSITY` values are `1`, `2`, and `3`.
 7. `DEBUG_VERBOSITY` defaults to `2` in debug mode when omitted.
+8. `DEBUG_VERBOSITY` controls metadata detail depth and debug-image annotation density. It must not reduce which visible figure objects are reported in metadata.
 
 ## Ease-of-use rules
 
@@ -68,25 +74,30 @@ Runtime mode fields:
    * `2D Symbol`, `symbol`, `scatter`, `symbol/scatter`
    * `2D contour`, `contour`, `contour plot`
    * `Polar Plot`, `polar`, `polar plot`
-2. Default `MPL_STYLE_PATH` to `assets/styles/mps_base.mplstyle` when the user does not explicitly override the style.
-3. Treat the selected mplstyle file as the factual source for figure size, export format, DPI, and padding defaults. Do not require the user to restate those defaults.
-4. Treat `ELEMENT_FORMATTING_SPEC` and `ADDITIONAL_IMAGE_SPECIFICATIONS` as optional artist-level refinements rather than mandatory inputs.
-5. Generate a data file only when the user explicitly asks for synthetic, random, demo, or placeholder data. Record the generated data path in metadata.
-6. Preserve unresolved placeholders rather than inventing names, schema details, label text, units, styles, or colormaps.
-7. Render labels, legend text, and colorbar labels in LaTeX-compatible strings when they appear in the figure.
-8. Write units in square brackets, for example `$\\mathrm{Time}\\ [s]$` or `$\\mathrm{Signal}\\ [a.u.]$`.
+2. Default the active style chain to `assets/styles/mps_base.mplstyle` when the user does not explicitly select a style.
+3. Accept registered style presets from `assets/style_registry.yaml` through `MPL_STYLE_PRESET` or an ordered `MPL_STYLE_CHAIN`.
+4. Treat the active mplstyle chain as the factual source for figure size, export format, DPI, and padding defaults. Do not require the user to restate those defaults.
+5. Treat `ELEMENT_FORMATTING_SPEC` and `ADDITIONAL_IMAGE_SPECIFICATIONS` as optional artist-level refinements rather than mandatory inputs.
+6. Generate a data file only when the user explicitly asks for synthetic, random, demo, or placeholder data. Record the generated data path in metadata.
+7. Preserve unresolved placeholders rather than inventing names, schema details, label text, units, styles, or colormaps.
+8. Render labels, legend text, and colorbar labels in LaTeX-compatible strings when they appear in the figure.
+9. Write units in square brackets, for example `$\\mathrm{Time}\\ [s]$` or `$\\mathrm{Signal}\\ [a.u.]$`.
 
 ## Style manager policy
 
-Use `assets/styles/mps_base.mplstyle` as the canonical style manager unless the user explicitly provides another style path.
+Use `assets/styles/mps_base.mplstyle` as the canonical default style manager. Registered SciencePlots styles are optional overlays and must not replace the default unless the user explicitly selects them.
 
 Rules:
 
-1. Load the canonical mplstyle file before creating the figure.
-2. Treat the mplstyle file as the authoritative source for export defaults.
-3. Apply any user-requested style override explicitly in code or local `rcParams`.
-4. Keep the canonical style active even when artist-level adjustments are added on top.
-5. Do not silently replace the canonical style with inferred defaults.
+1. Load the active style chain before creating the figure.
+2. With no style field, load only `assets/styles/mps_base.mplstyle`.
+3. With `MPL_STYLE_PRESET`, load `assets/styles/mps_base.mplstyle` and then the registered preset from `assets/style_registry.yaml`.
+4. With `MPL_STYLE_CHAIN`, load `assets/styles/mps_base.mplstyle` and then each registered preset in the user-provided order.
+5. Keep `MPL_STYLE_PATH` as an explicit file-path override. If it appears with `MPL_STYLE_PRESET` or `MPL_STYLE_CHAIN`, ask the user to rewrite the request as one ordered `MPL_STYLE_CHAIN` instead of guessing merge order.
+6. Treat the final active mplstyle chain as the authoritative source for export defaults.
+7. Apply any user-requested style override explicitly in code or local `rcParams`.
+8. Do not silently replace the canonical style with inferred defaults.
+9. Record the active `style_chain`, resolved style paths, and registered preset use in metadata.
 
 ## Supported plot families
 
@@ -112,7 +123,7 @@ Follow this order:
 
 ### Step 1. Check prerequisites and input completeness
 
-Verify the LaTeX prerequisites when the canonical style is in use.
+Verify the LaTeX prerequisites when the final active style chain has `text.usetex : True`.
 Check whether the required fields are present.
 If the plot type is contour or heat-map equivalent, verify that `COLORMAP_NAME` is present.
 
@@ -121,6 +132,9 @@ If the plot type is contour or heat-map equivalent, verify that `COLORMAP_NAME` 
 Normalize plot-type aliases to one canonical label.
 Normalize file paths exactly as provided.
 Default the style path to `assets/styles/mps_base.mplstyle` when the user does not provide one.
+Resolve `MPL_STYLE_PRESET` and `MPL_STYLE_CHAIN` only against registered IDs in `assets/style_registry.yaml`.
+Reject unknown registered style IDs instead of treating them as file paths.
+Reject simultaneous `MPL_STYLE_PATH` and registered style fields unless the user has explicitly provided an ordered chain.
 Default `RUN_MODE` to `production` when the user does not provide one.
 In debug mode, default `DEBUG_VERBOSITY` to `2` when the user does not provide one.
 Reject unsupported `RUN_MODE` values.
@@ -133,7 +147,7 @@ Generate the data file first when the user explicitly requests synthetic or demo
 
 ### Step 4. Inspect style facts
 
-Read the selected mplstyle file and treat it as the source of truth for:
+Read the active mplstyle file or chain and treat the final resolved style as the source of truth for:
 
 1. Figure dimensions
 2. Export format
@@ -146,12 +160,20 @@ Read the selected mplstyle file and treat it as the source of truth for:
 
 Load and preprocess the data.
 Construct the requested Matplotlib figure.
-Apply the canonical style plus any explicit artist-level overrides.
+Apply the active style chain plus any explicit artist-level overrides.
 Format labels in LaTeX-compatible strings and write units in square brackets.
 
 ### Step 6. Export outputs
 
 Export the clean production figure using the format and DPI dictated by the active mplstyle unless the user explicitly overrides those settings.
+
+When the output suffix or effective export format is `tif` or `tiff`, save with:
+
+```python
+figure.savefig(output_path, pil_kwargs={"compression": "tiff_lzw"})
+```
+
+Do not silently fall back to an uncompressed TIFF if LZW compression is unavailable.
 
 When `RUN_MODE` is `production`, stop after writing the clean figure and companion metadata.
 
@@ -160,10 +182,11 @@ When `RUN_MODE` is `debug`:
 1. Save the clean production figure before adding diagnostic overlays.
 2. Build a diagnostic annotation layer on the same figure after the clean export succeeds.
 3. Save the annotated debug figure as `<OUTPUT_BASENAME>.debug.<style_format>`.
-4. Preserve the style-driven export format, DPI, bounding-box behavior, and padding for both images.
+4. Preserve the style-driven export format, DPI, bounding-box behavior, padding, and TIFF LZW compression policy for both images.
 5. Use high-contrast callout boxes and connector lines for debug labels.
 6. Use `usetex=False` for debug annotation text so labels that contain property strings do not break LaTeX-enabled production styles.
-7. Keep the debug image human-readable; put exhaustive low-level detail in metadata rather than overcrowding the figure.
+7. Keep `DEBUG_VERBOSITY` 1 and 2 debug images readable by labeling the main semantic IDs.
+8. Treat `DEBUG_VERBOSITY` 3 as a zoom-oriented diagnostic image that may use small dense labels for position adjustment.
 
 Create a companion metadata JSON file that records at least:
 
@@ -173,42 +196,61 @@ Create a companion metadata JSON file that records at least:
 4. Style path
 5. Output figure path
 6. Run mode
+7. Style chain
+8. Resolved style paths
+9. Registered style preset, when used
+10. Export compression, when the output format uses compression
 
 In debug mode, also record:
 
 1. Debug verbosity
 2. Debug figure path
 3. Debug elements and their stable user-addressable IDs
+4. Debug object count
+5. Debug coverage summary, including absent common object categories
+6. Unclassified visible artists, when any visible object cannot be assigned a semantic ID
 
 #### Debug element naming
 
-Use stable semantic IDs for user-addressable Matplotlib elements. Prefer names that a user can refer to in a follow-up request without knowing Matplotlib internals.
+Debug metadata must cover every visible semantic object in the figure at every `DEBUG_VERBOSITY` level. Use stable semantic IDs for user-addressable Matplotlib elements. Prefer names that a user can refer to in a follow-up request without knowing Matplotlib internals.
+
+`DEBUG_VERBOSITY` changes how many attributes are recorded for each object and how much diagnostic information appears in the debug image; it must never omit visible objects from metadata such as titles, legends, tick labels, spines, grid lines, colorbars, annotations, or series.
 
 Common IDs include:
 
 1. `figure`
-2. `main_axes`
-3. `x_label`
-4. `y_label`
-5. `title`
-6. `legend`
-7. `colorbar`
-8. `colorbar_label`
-9. `series_1`, `series_2`, and later numbered line series
-10. `scatter_1`, `scatter_2`, and later numbered scatter groups
-11. `contour_fill`
-12. `contour_lines`
-13. `annotation_1`, `annotation_2`, and later numbered annotations
+2. `main_axes`, `axes_2`, and later numbered axes
+3. `title`, `subtitle`, and axes-specific titles when present
+4. `x_label`, `y_label`, `z_label`, and colorbar labels
+5. `legend`, `legend_title`, `legend_entry_1`, `legend_entry_2`, and later legend entries
+6. `colorbar`, `colorbar_label`, and numbered colorbar tick label groups
+7. `series_1`, `series_2`, and later numbered line series
+8. `scatter_1`, `scatter_2`, and later numbered scatter groups
+9. `contour_fill`, `contour_lines`, and contour label groups
+10. `image_1`, `patch_1`, `reference_line_1`, and later numbered visible non-series artists
+11. `annotation_1`, `text_1`, and later numbered annotations or free text
+12. `x_tick_labels`, `y_tick_labels`, `x_tick_lines`, `y_tick_lines`, `grid_lines`, and `spines`
+13. `artist_1`, `artist_2`, and later fallback IDs for visible artists that cannot be classified semantically
 
-Group repetitive low-level objects by default, including ticks, tick labels, grid lines, spines, and contour polygons. Provide per-object IDs only when the user explicitly asks for that level of detail.
+For repeated low-level objects, group them semantically in metadata rather than omitting them. For example, `x_tick_labels` should record count and label text; `grid_lines` should record count and visual style; `spines` should record visible sides and style. Use per-object IDs for low-level members only when needed to make a user follow-up request unambiguous.
+
+If a common object category is absent, such as no `legend` or no `colorbar`, do not invent a placeholder object. Record the absence in the debug coverage summary.
+
+At `DEBUG_VERBOSITY` 1 and 2, the annotated debug image should label the main semantic objects and stable IDs, while the metadata remains the complete source of truth for all visible objects.
+
+At `DEBUG_VERBOSITY` 3, the annotated debug image should label every user-addressable semantic object and grouped low-level category with small, high-contrast, zoom-friendly labels. Do not expand repeated low-level groups into every individual Matplotlib artist unless per-member IDs are needed to make a follow-up edit unambiguous.
 
 #### Debug verbosity
 
-Use `DEBUG_VERBOSITY` to control how much diagnostic information appears in callouts and metadata:
+Use `DEBUG_VERBOSITY` to control how much diagnostic information appears in callouts and metadata. All levels must include the same complete visible semantic object coverage:
 
-1. `1`: element ID and element type.
-2. `2`: level 1 plus key user-facing attributes such as text or label, color, linewidth, linestyle, marker, colormap, alpha, and axes association.
-3. `3`: level 2 plus position or extents, z-order, transform and layout notes, contour levels or counts, collection sizes, and colorbar or mappable details where available.
+1. `1`: complete object coverage with element ID, element type, parent object, visible flag, and concise semantic role.
+2. `2`: level 1 coverage plus key user-facing attributes such as text or label, color, linewidth, linestyle, marker, colormap, alpha, and axes association.
+3. `3`: level 2 coverage plus dense in-figure position diagnostics, position or extents, z-order, transform and layout notes, collection sizes, contour levels or counts, legend entry details, colorbar or mappable details, and grouped low-level member summaries where available.
+
+For `DEBUG_VERBOSITY` 3 callouts, include compact position fields where available: stable ID, element type, parent axes or figure, anchor or center in figure fraction, axes-fraction position when applicable, data position or data extents when applicable, bbox or extents, transform shorthand, z-order, and count, levels, or entries for grouped objects.
+
+For `DEBUG_VERBOSITY` 3 reference guides, draw figure-fraction grid guides at `0`, `0.25`, `0.5`, `0.75`, and `1`, axes bounding boxes, axes center and corner reference points, anchor points for labeled objects, and connector lines from labels to anchors or bboxes.
 
 ### Step 7. Verify results
 
@@ -233,9 +275,12 @@ If the materials are insufficient or a prerequisite is missing:
 2. Missing required field: `DATA_STRUCTURE_DESCRIPTION`
 3. Missing required field: `IMAGE_TYPE`
 4. Missing required field: `COLORMAP_NAME` for contour or heat-map equivalent plots
-5. Missing prerequisite: LaTeX runtime or required packages for the canonical style
-6. Unsupported `RUN_MODE` value
-7. Unsupported `DEBUG_VERBOSITY` value in debug mode
+5. Missing prerequisite: LaTeX runtime or required packages for the active style chain
+6. Missing TIFF LZW compression support for TIFF output
+7. Unsupported `RUN_MODE` value
+8. Unsupported `DEBUG_VERBOSITY` value in debug mode
+9. Unknown `MPL_STYLE_PRESET` or `MPL_STYLE_CHAIN` entry
+10. Ambiguous style request combining `MPL_STYLE_PATH` with registered style fields
 
 ## Hard constraints
 
@@ -248,15 +293,23 @@ If the materials are insufficient or a prerequisite is missing:
 7. Write the metadata JSON file whenever a figure is generated.
 8. In debug mode, save the clean production figure before adding debug overlays.
 9. Do not let debug annotations change the scientific plot semantics.
+10. Do not infer or spell-correct registered style IDs.
+11. Save every `.tif` or `.tiff` output with LZW compression through `pil_kwargs={"compression": "tiff_lzw"}`.
+12. Do not fall back to uncompressed TIFF output when LZW compression fails.
+13. In debug mode, record every visible semantic object in metadata regardless of `DEBUG_VERBOSITY`.
+14. Do not omit title, legend, colorbar, annotations, ticks, tick labels, grid lines, spines, or visible fallback artists from debug metadata when they are present.
+15. At `DEBUG_VERBOSITY` 3, include dense small-font position and reference overlays for user-addressable semantic objects and grouped low-level categories.
+16. Do not label every repeated low-level Matplotlib artist in the level 3 image unless that is needed to make a user follow-up request unambiguous.
 
 ## File usage inside this skill
 
 Read the following files when useful:
 
 1. `assets/figure_request_template.md` for the user-facing input template
-2. `assets/style_registry.yaml` for canonical plot-type aliases, style-owned defaults, and field rules
+2. `assets/style_registry.yaml` for canonical plot-type aliases, registered style presets, TIFF compression rules, style-owned defaults, and field rules
 3. `assets/styles/mps_base.mplstyle` for the canonical base style manager
-4. `references/source-compile.md` for the original design context when historical intent matters
+4. `assets/styles/scienceplots/style_manifest.csv` when checking bundled SciencePlots style provenance
+5. `references/source-compile.md` for the original design context when historical intent matters
 
 ## Verification checklist
 
@@ -265,11 +318,17 @@ Before finishing, confirm internally that:
 1. The required inputs are present before generating a figure.
 2. `COLORMAP_NAME` is present for contour or heat-map equivalent requests.
 3. The selected style path exists.
-4. The LaTeX prerequisites required by the active style are available.
-5. Labels are written in LaTeX-compatible strings when labels are generated or updated.
-6. Units use square brackets when units appear in labels.
-7. The output file uses the style-driven format and DPI unless the user explicitly overrides them.
-8. The metadata JSON file exists and records the data source path(s) and creation timestamp.
-9. The metadata JSON records `run_mode` for every generated figure.
-10. In debug mode, both the clean image and `.debug.` image exist.
-11. In debug mode, metadata records `debug_verbosity`, `debug_figure_path`, and `debug_elements`.
+4. Every registered style ID resolves to a bundled `.mplstyle` file.
+5. The LaTeX prerequisites required by the active style chain are available.
+6. Labels are written in LaTeX-compatible strings when labels are generated or updated.
+7. Units use square brackets when units appear in labels.
+8. The output file uses the style-driven format and DPI unless the user explicitly overrides them.
+9. Every `.tif` or `.tiff` output was saved with LZW compression.
+10. The metadata JSON file exists and records the data source path(s) and creation timestamp.
+11. The metadata JSON records `run_mode` for every generated figure.
+12. The metadata JSON records `style_chain` and resolved style paths for every generated figure.
+13. The metadata JSON records `export_compression: tiff_lzw` for TIFF outputs.
+14. In debug mode, both the clean image and `.debug.` image exist.
+15. In debug mode, metadata records `debug_verbosity`, `debug_figure_path`, `debug_elements`, `debug_object_count`, `debug_coverage_summary`, and `debug_unclassified_artists`.
+16. In debug mode, `debug_elements` includes every visible semantic object at every verbosity level.
+17. With `DEBUG_VERBOSITY` 3, the debug image includes zoom-friendly position callouts and reference guides for semantic objects and grouped low-level categories.

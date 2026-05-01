@@ -16,6 +16,7 @@ STYLE_PATH = REPO_ROOT / "skills" / "mpl-figure-generator" / "assets" / "styles"
 CSV_PATH = OUTPUT_DIR / "random_contour_data.csv"
 TIFF_PATH = OUTPUT_DIR / "random_contour_2d.tiff"
 METADATA_PATH = OUTPUT_DIR / "random_contour_2d.metadata.json"
+TIFF_LZW_PIL_KWARGS = {"compression": "tiff_lzw"}
 
 X_MIN = -3.0
 X_MAX = 3.0
@@ -25,6 +26,14 @@ GRID_X = 18
 GRID_Y = 14
 RANDOM_SEED = 20260404
 CONTOUR_LEVELS = 16
+
+
+def save_figure(figure, output_path: Path) -> None:
+    save_kwargs = {}
+    if output_path.suffix.lower() in {".tif", ".tiff"}:
+        save_kwargs["pil_kwargs"] = TIFF_LZW_PIL_KWARGS
+
+    figure.savefig(output_path, **save_kwargs)
 
 
 def scalar_field(x_value: float, y_value: float) -> float:
@@ -102,7 +111,7 @@ def build_plot(rows: list[tuple[float, float, float]]) -> None:
     axis.set_ylim(Y_MIN, Y_MAX)
     figure.tight_layout()
 
-    figure.savefig(TIFF_PATH)
+    save_figure(figure, TIFF_PATH)
     plt.close(figure)
 
 
@@ -118,6 +127,7 @@ def write_metadata(rows: list[tuple[float, float, float]]) -> None:
         "output_basename": "random_contour_2d",
         "output_figure_path": str(TIFF_PATH.relative_to(REPO_ROOT)).replace("\\", "/"),
         "export_format": "tiff",
+        "export_compression": "tiff_lzw",
         "export_dpi": 300,
         "row_count": len(rows),
         "x_field": "x",
