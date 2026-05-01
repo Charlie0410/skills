@@ -48,6 +48,18 @@ Optional fields:
 4. `ADDITIONAL_IMAGE_SPECIFICATIONS`
 5. `OUTPUT_BASENAME`
 6. `SAMPLE_ROWS_OR_SCHEMA_SNIPPETS`
+7. `RUN_MODE`
+8. `DEBUG_VERBOSITY`
+
+Runtime mode fields:
+
+1. `RUN_MODE` defaults to `production` when omitted.
+2. Valid `RUN_MODE` values are `production` and `debug`.
+3. `production` preserves the clean finished-figure workflow.
+4. `debug` exports the clean production figure first, then exports a second annotated debug figure for second-pass adjustment.
+5. `DEBUG_VERBOSITY` is used only when `RUN_MODE` is `debug`.
+6. Valid `DEBUG_VERBOSITY` values are `1`, `2`, and `3`.
+7. `DEBUG_VERBOSITY` defaults to `2` in debug mode when omitted.
 
 ## Ease-of-use rules
 
@@ -109,6 +121,10 @@ If the plot type is contour or heat-map equivalent, verify that `COLORMAP_NAME` 
 Normalize plot-type aliases to one canonical label.
 Normalize file paths exactly as provided.
 Default the style path to `assets/styles/mps_base.mplstyle` when the user does not provide one.
+Default `RUN_MODE` to `production` when the user does not provide one.
+In debug mode, default `DEBUG_VERBOSITY` to `2` when the user does not provide one.
+Reject unsupported `RUN_MODE` values.
+In debug mode, reject unsupported `DEBUG_VERBOSITY` values instead of guessing.
 
 ### Step 3. Resolve the data source
 
@@ -135,7 +151,20 @@ Format labels in LaTeX-compatible strings and write units in square brackets.
 
 ### Step 6. Export outputs
 
-Export the figure using the format and DPI dictated by the active mplstyle unless the user explicitly overrides those settings.
+Export the clean production figure using the format and DPI dictated by the active mplstyle unless the user explicitly overrides those settings.
+
+When `RUN_MODE` is `production`, stop after writing the clean figure and companion metadata.
+
+When `RUN_MODE` is `debug`:
+
+1. Save the clean production figure before adding diagnostic overlays.
+2. Build a diagnostic annotation layer on the same figure after the clean export succeeds.
+3. Save the annotated debug figure as `<OUTPUT_BASENAME>.debug.<style_format>`.
+4. Preserve the style-driven export format, DPI, bounding-box behavior, and padding for both images.
+5. Use high-contrast callout boxes and connector lines for debug labels.
+6. Use `usetex=False` for debug annotation text so labels that contain property strings do not break LaTeX-enabled production styles.
+7. Keep the debug image human-readable; put exhaustive low-level detail in metadata rather than overcrowding the figure.
+
 Create a companion metadata JSON file that records at least:
 
 1. Plot data source path(s)
@@ -143,6 +172,43 @@ Create a companion metadata JSON file that records at least:
 3. Plot type
 4. Style path
 5. Output figure path
+6. Run mode
+
+In debug mode, also record:
+
+1. Debug verbosity
+2. Debug figure path
+3. Debug elements and their stable user-addressable IDs
+
+#### Debug element naming
+
+Use stable semantic IDs for user-addressable Matplotlib elements. Prefer names that a user can refer to in a follow-up request without knowing Matplotlib internals.
+
+Common IDs include:
+
+1. `figure`
+2. `main_axes`
+3. `x_label`
+4. `y_label`
+5. `title`
+6. `legend`
+7. `colorbar`
+8. `colorbar_label`
+9. `series_1`, `series_2`, and later numbered line series
+10. `scatter_1`, `scatter_2`, and later numbered scatter groups
+11. `contour_fill`
+12. `contour_lines`
+13. `annotation_1`, `annotation_2`, and later numbered annotations
+
+Group repetitive low-level objects by default, including ticks, tick labels, grid lines, spines, and contour polygons. Provide per-object IDs only when the user explicitly asks for that level of detail.
+
+#### Debug verbosity
+
+Use `DEBUG_VERBOSITY` to control how much diagnostic information appears in callouts and metadata:
+
+1. `1`: element ID and element type.
+2. `2`: level 1 plus key user-facing attributes such as text or label, color, linewidth, linestyle, marker, colormap, alpha, and axes association.
+3. `3`: level 2 plus position or extents, z-order, transform and layout notes, contour levels or counts, collection sizes, and colorbar or mappable details where available.
 
 ### Step 7. Verify results
 
@@ -154,7 +220,7 @@ When practical, inspect the output file metadata or image dimensions to confirm 
 If the materials are sufficient and the prerequisites are satisfied:
 
 1. Generate the figure artifacts directly.
-2. Return a short status summary with the created file paths and any explicit overrides that were applied.
+2. Return a short status summary with the created file paths, run mode, and any explicit overrides that were applied.
 
 If the materials are insufficient or a prerequisite is missing:
 
@@ -168,6 +234,8 @@ If the materials are insufficient or a prerequisite is missing:
 3. Missing required field: `IMAGE_TYPE`
 4. Missing required field: `COLORMAP_NAME` for contour or heat-map equivalent plots
 5. Missing prerequisite: LaTeX runtime or required packages for the canonical style
+6. Unsupported `RUN_MODE` value
+7. Unsupported `DEBUG_VERBOSITY` value in debug mode
 
 ## Hard constraints
 
@@ -178,6 +246,8 @@ If the materials are insufficient or a prerequisite is missing:
 5. Prefer the canonical style manager file unless the user explicitly overrides it.
 6. Treat export defaults as style-driven rather than prompt-driven.
 7. Write the metadata JSON file whenever a figure is generated.
+8. In debug mode, save the clean production figure before adding debug overlays.
+9. Do not let debug annotations change the scientific plot semantics.
 
 ## File usage inside this skill
 
@@ -200,3 +270,6 @@ Before finishing, confirm internally that:
 6. Units use square brackets when units appear in labels.
 7. The output file uses the style-driven format and DPI unless the user explicitly overrides them.
 8. The metadata JSON file exists and records the data source path(s) and creation timestamp.
+9. The metadata JSON records `run_mode` for every generated figure.
+10. In debug mode, both the clean image and `.debug.` image exist.
+11. In debug mode, metadata records `debug_verbosity`, `debug_figure_path`, and `debug_elements`.

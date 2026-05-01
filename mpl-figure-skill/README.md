@@ -25,6 +25,12 @@ The default style at `skills/mpl-figure-generator/assets/styles/mps_base.mplstyl
 
 If those prerequisites are missing, the skill should report the problem instead of silently disabling the style.
 
+## Run modes
+
+Existing requests remain production requests by default. Leave `RUN_MODE` empty, or set it to `production`, to create the clean finished figure and companion metadata.
+
+Set `RUN_MODE` to `debug` to also create `<OUTPUT_BASENAME>.debug.<style_format>`, an annotated figure with stable element IDs such as `series_1`, `x_label`, `legend`, and `colorbar_label`. Debug metadata records `run_mode`, `debug_verbosity`, `debug_figure_path`, and `debug_elements`. `DEBUG_VERBOSITY` accepts `1`, `2`, or `3` and defaults to `2` in debug mode.
+
 ## Install
 
 After publishing to GitHub:

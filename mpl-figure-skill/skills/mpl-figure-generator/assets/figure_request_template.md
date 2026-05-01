@@ -18,6 +18,14 @@ The canonical style file already defines the default figure size, export format,
 {{IMAGE_TYPE}}
 </IMAGE_TYPE>
 
+<RUN_MODE>
+{{production_OR_debug_OR_EMPTY_FOR_production}}
+</RUN_MODE>
+
+<DEBUG_VERBOSITY>
+{{1_2_3_OR_EMPTY_FOR_default_2_IN_debug_MODE}}
+</DEBUG_VERBOSITY>
+
 <DATA_CREATION_INSTRUCTIONS>
 {{LEAVE_EMPTY_IF_DATA_ALREADY_EXISTS}}
 </DATA_CREATION_INSTRUCTIONS>
@@ -53,11 +61,13 @@ The canonical style file already defines the default figure size, export format,
 1. `DATA_FILE_PATHS`: provide one or more explicit paths. When asking for synthetic data, provide the target path that Codex should create.
 2. `DATA_STRUCTURE_DESCRIPTION`: provide schema, field meanings, units, grouping rules, and explicit x, y, or z mappings.
 3. `IMAGE_TYPE`: provide `2D Line`, `2D Symbol`, `2D contour`, `Polar Plot`, or another explicit plot type.
-4. `DATA_CREATION_INSTRUCTIONS`: use only when you want Codex to generate synthetic or demo data.
-5. `MPL_STYLE_PATH`: leave empty to accept the canonical style manager.
-6. `ELEMENT_FORMATTING_SPEC`: use only for extra artist-level overrides such as colors, line styles, markers, or annotations.
-7. `COLORMAP_NAME`: required for `2D contour`.
-8. State units explicitly so Codex can render labels in LaTeX with square-bracketed units such as `$\\mathrm{Temperature}\\ [K]$`.
+4. `RUN_MODE`: optional. Leave empty for `production`; use `debug` to also create an annotated debug figure.
+5. `DEBUG_VERBOSITY`: optional. Used only in debug mode; valid values are `1`, `2`, and `3`, with default `2`.
+6. `DATA_CREATION_INSTRUCTIONS`: use only when you want Codex to generate synthetic or demo data.
+7. `MPL_STYLE_PATH`: leave empty to accept the canonical style manager.
+8. `ELEMENT_FORMATTING_SPEC`: use only for extra artist-level overrides such as colors, line styles, markers, or annotations.
+9. `COLORMAP_NAME`: required for `2D contour`.
+10. State units explicitly so Codex can render labels in LaTeX with square-bracketed units such as `$\\mathrm{Temperature}\\ [K]$`.
 
 ## Runtime prerequisite
 
@@ -91,4 +101,16 @@ Generate a single synthetic CSV with 100 rows and columns `x` and `y`.
 <COLORMAP_NAME>
 viridis
 </COLORMAP_NAME>
+```
+
+### Debug mode
+
+```text
+<RUN_MODE>
+debug
+</RUN_MODE>
+
+<DEBUG_VERBOSITY>
+2
+</DEBUG_VERBOSITY>
 ```

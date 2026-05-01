@@ -7,6 +7,89 @@ runtime_requirements:
   - LaTeX package lmodern
   - LaTeX package siunitx
 
+runtime_defaults:
+  RUN_MODE: production
+  DEBUG_VERBOSITY: 2
+
+run_mode_values:
+  production:
+    description: Save the clean finished figure and companion metadata only.
+  debug:
+    description: Save the clean figure, then save a second annotated debug figure for second-pass adjustment.
+
+debug_verbosity_levels:
+  1:
+    - element ID
+    - element type
+  2:
+    - element ID
+    - element type
+    - text or label
+    - color
+    - linewidth
+    - linestyle
+    - marker
+    - colormap
+    - alpha
+    - axes association
+  3:
+    - element ID
+    - element type
+    - text or label
+    - color
+    - linewidth
+    - linestyle
+    - marker
+    - colormap
+    - alpha
+    - axes association
+    - position or extents
+    - z-order
+    - transform and layout notes
+    - contour levels or counts
+    - collection sizes
+    - colorbar or mappable details
+
+debug_output_rules:
+  debug_filename_pattern: <OUTPUT_BASENAME>.debug.<style_format>
+  clean_export_before_annotations: true
+  preserve_style_format_and_dpi: true
+  preserve_style_bbox_and_padding: true
+  annotation_text_usetex: false
+  annotation_style:
+    - high-contrast callout boxes
+    - connector lines
+  grouping_default:
+    - ticks
+    - tick labels
+    - grid lines
+    - spines
+    - contour polygons
+
+debug_element_ids:
+  - figure
+  - main_axes
+  - x_label
+  - y_label
+  - title
+  - legend
+  - colorbar
+  - colorbar_label
+  - series_1
+  - scatter_1
+  - contour_fill
+  - contour_lines
+  - annotation_1
+
+metadata_fields:
+  production:
+    - run_mode
+  debug:
+    - run_mode
+    - debug_verbosity
+    - debug_figure_path
+    - debug_elements
+
 plot_type_aliases:
   2D Line:
     - 2D Line
@@ -41,6 +124,8 @@ optional_fields:
   - ADDITIONAL_IMAGE_SPECIFICATIONS
   - OUTPUT_BASENAME
   - SAMPLE_ROWS_OR_SCHEMA_SNIPPETS
+  - RUN_MODE
+  - DEBUG_VERBOSITY
 
 style_owned_defaults:
   - figure.figsize
