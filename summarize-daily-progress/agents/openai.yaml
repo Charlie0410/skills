@@ -1,0 +1,4 @@
+interface:
+  display_name: "Daily Progress Summary"
+  short_description: "Summarize Codex session progress"
+  default_prompt: "Use $summarize-daily-progress to summarize today's work by project and list next steps."
