@@ -18,7 +18,7 @@
 | `aca-slide-pptx-gen/` | 单个 skill | 在 `aca-slide-gen` 的学术内容约束基础上，使用 OfficeCLI 生成一页 16:9 学术主内容 `.pptx`。 |
 | `project-config/` | 单个 skill | 管理项目本地 TOML 配置，例如 trust、sandbox 和 approval 等项目级设置。 |
 | `send-completion-reminder/` | 单个 skill | 在任务完成后调用本地提醒程序发送提醒邮件。 |
-| `canonical_prompt_compiler_skills/` | skill 集合 | 围绕 Canonical Prompt Protocol 的一组阶段化 skill，包括 `normalize`、`compile`、`verify`、`repair`。 |
+| `canonical_prompt_compiler_skills/` | skill 集合 | 围绕 Canonical Prompt Protocol 的一组阶段化 skill，包括 `normalize`、`compile`、`package`、`verify`、`repair`，其中 `package` 用于把 compiled prompt 要求提交的本地材料打包成附件。 |
 | `mpl-figure-skill/` | 独立 skill 项目 | 一个相对完整的技能项目，包含 `skills/`、`assets/`、`references/`、`examples/` 和独立 `README.md`。 |
 
 ## 目录约定

@@ -1,0 +1,4 @@
+interface:
+  display_name: "CPP Package Materials"
+  short_description: "Package CPP prompt materials"
+  default_prompt: "Use $cpp-package-materials to package the local materials required by this compiled CPP prompt into a zip attachment and manifest."
