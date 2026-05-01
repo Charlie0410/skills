@@ -41,6 +41,21 @@
 
 如果某个目录本身就是一个独立的小型 skill 项目，比如 `mpl-figure-skill/`，则优先查看它自己的 `README.md` 和内部结构。
 
+## 每个技能的使用方法
+
+| Skill | 路径 | 适用场景 | 使用方法 |
+| --- | --- | --- | --- |
+| `aca-slide-gen` | `aca-slide-gen/SKILL.md` | 需要从论文、报告、图表、数据或公式生成一页 16:9 学术主内容 HTML slide。 | 先收集 `section_title`、`topic` 和正文或等价结构化内容，再按 skill 的输入契约生成单页自包含 HTML。 |
+| `aca-slide-pptx-gen` | `aca-slide-pptx-gen/SKILL.md` | 需要真实 `.pptx` 文件，而不是 HTML slide，且内容仍是学术主内容页。 | 先确认 OfficeCLI 可用，再按输入契约创建或修改一页 16:9 PowerPoint 内容 slide，并运行对应验证。 |
+| `project-config` | `project-config/SKILL.md` | 需要读取、创建、预演或应用某个项目路径下的本地 TOML 配置。 | 明确目标项目路径，只操作项目本地 `.tooling/config.toml`，优先用脚本 API 或 CLI 做 dry-run 后再 apply。 |
+| `send-completion-reminder` | `send-completion-reminder/SKILL.md` | 用户希望任务完成后自动发送一封提醒邮件。 | 正常完成主任务，最后且仅一次调用 `C:\Program Files\self\send_reminder.exe` 发送包含实际结果的简短提醒。 |
+| `cpp-normalize-source-spec` | `canonical_prompt_compiler_skills/cpp-normalize-source-spec/SKILL.md` | 需要把自由任务描述或 CPP `SOURCE_SPEC` 规范化为 `[NORMALIZED_SPEC]`。 | 读取最小权威来源，区分 hard constraints 与 soft preferences，只输出 NORMALIZE 阶段制品。 |
+| `cpp-compile-prompt` | `canonical_prompt_compiler_skills/cpp-compile-prompt/SKILL.md` | 需要把 `[NORMALIZED_SPEC]` 或等价源任务编译成可复用 CPP prompt。 | 读取编译器规则和模板，选择 lite 或 full profile，输出 `[COMPILATION_DIAGNOSTICS]` 与 `[COMPILED_PROMPT]`。 |
+| `cpp-package-materials` | `canonical_prompt_compiler_skills/cpp-package-materials/SKILL.md` | 需要把 `.compiled-prompt.md` 要求提交的本地运行材料打包成附件。 | 用 materials-map JSON 或 `--material` 绑定逻辑材料 ID，运行 `package_materials.py` 生成 zip 与 sidecar manifest。 |
+| `cpp-verify-prompt` | `canonical_prompt_compiler_skills/cpp-verify-prompt/SKILL.md` | 需要审查已编译 CPP draft prompt 是否忠实于源任务、协议和 profile。 | 读取 `SOURCE_SPEC`、`DRAFT_PROMPT`、CPP 规则与必要模板，只输出 `[VERIFY_REPORT]`。 |
+| `cpp-repair-prompt` | `canonical_prompt_compiler_skills/cpp-repair-prompt/SKILL.md` | 已有 `VERIFY_REPORT`，需要对 compiled prompt 做有边界的修复。 | 以 `SOURCE_SPEC`、`DRAFT_PROMPT` 和 `VERIFY_REPORT` 为边界，输出 `[REPAIR_SUMMARY]` 与 `[REPAIRED_PROMPT]`。 |
+| `mpl-figure-generator` | `mpl-figure-skill/skills/mpl-figure-generator/SKILL.md` | 需要用 Matplotlib 和仓库内 mplstyle 直接生成科学图、元数据，或调试标注图。 | 先读取 `mpl-figure-skill/README.md` 和 skill 文件，确认数据、图型、样式和 LaTeX 前置条件，再生成 production 或 debug 输出。 |
+
 ## 维护原则
 
 - 先保证 skill 能表达清楚用途和边界，再考虑是否包装成统一格式。
