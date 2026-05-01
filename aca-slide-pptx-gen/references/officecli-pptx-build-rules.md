@@ -10,11 +10,18 @@ Verify OfficeCLI:
 officecli --version
 ```
 
+If `officecli` is not on PATH, check the standard local install path:
+
+```powershell
+C:\Users\charlie\AppData\Local\OfficeCli\officecli.exe --version
+```
+
 When syntax is uncertain, run help first:
 
 ```powershell
 officecli help pptx
 officecli help pptx shape
+officecli help pptx connector
 officecli help pptx picture
 officecli help pptx table
 officecli help pptx chart
@@ -32,8 +39,8 @@ Use this sequence:
 officecli create output.pptx
 officecli open output.pptx
 officecli add output.pptx / --type slide --prop layout=blank --prop background=FFFFFF
-officecli add output.pptx "/slide[1]" --type shape --prop name=SectionTitle --prop text="Methods" --prop x=1.2cm --prop y=0.8cm --prop width=31.47cm --prop height=0.8cm --prop font=Calibri --prop size=18 --prop bold=true --prop color=111111 --prop fill=none
-officecli add output.pptx "/slide[1]" --type shape --prop name=TitleRule --prop preset=rect --prop x=1.2cm --prop y=1.85cm --prop width=31.47cm --prop height=0.04cm --prop fill=1F2937 --prop line=none
+officecli add output.pptx "/slide[1]" --type shape --prop name=SectionTitle --prop text="Methods" --prop x=1.2cm --prop y=0.8cm --prop width=31.47cm --prop height=1.3cm --prop font=Calibri --prop size=34 --prop bold=true --prop color=111111 --prop fill=none
+officecli add output.pptx "/slide[1]" --type connector --prop shape=straight --prop x=1.2cm --prop y=2.15cm --prop width=31.47cm --prop height=0cm --prop color=1F2937 --prop linewidth=2pt
 ```
 
 Continue adding content shapes, pictures, tables, charts, formulas, and notes. Then:
@@ -43,6 +50,7 @@ officecli close output.pptx
 officecli validate output.pptx
 officecli view output.pptx issues
 officecli view output.pptx annotated
+officecli view output.pptx text
 officecli view output.pptx html
 ```
 
@@ -64,6 +72,22 @@ Create text with `shape`. Set explicit `x`, `y`, `width`, `height`, `font`, `siz
 
 Use separate shapes or runs for mixed Chinese/English when different fonts are required. For multi-line text, prefer separate paragraphs or a JSON batch with real `\n` values. Verify with `officecli view output.pptx text` that no literal `\n`, `\t`, or escaped `$` leaked.
 
+Apply any text-box background color directly on the text shape:
+
+```powershell
+officecli add output.pptx "/slide[1]" --type shape --prop name=Qualifier --prop text="Condition: Re=2000; inlet pressure fixed" --prop x=23cm --prop y=15.9cm --prop width=9.67cm --prop height=1.6cm --prop font=Calibri --prop size=18 --prop color=111827 --prop fill=EEF2FF --prop margin=0.15cm
+```
+
+Do not create a separate filled rectangle behind text.
+
+For related list items in one visual block, use one textbox with bullet formatting:
+
+```powershell
+officecli add output.pptx "/slide[1]" --type shape --prop name=EvidenceAnnotation1 --prop text="Baseline normalized to 1.0`nPeak occurs at 12 ms`nSignal returns to baseline by 40 ms" --prop x=23cm --prop y=5cm --prop width=8.5cm --prop height=4cm --prop font=Calibri --prop size=20 --prop color=111827 --prop fill=none --prop list=bullet --prop lineSpacing=1.3x
+```
+
+Do not create one textbox per bullet.
+
 ## Pictures
 
 Add pictures only from existing paths:
@@ -79,19 +103,23 @@ If no image file exists, create a placeholder shape labeled `Figure placeholder:
 
 ## Captions
 
-Use separate caption shapes:
+Use separate caption shapes. The default caption style is italic text with no background fill:
 
 ```powershell
-officecli add output.pptx "/slide[1]" --type shape --prop name=Caption1 --prop text="Fig. 1. Pressure distribution" --prop x=1.2cm --prop y=8.8cm --prop width=10cm --prop height=0.7cm --prop font=Calibri --prop size=12 --prop bold=true --prop color=000000 --prop fill=FFC000
+officecli add output.pptx "/slide[1]" --type shape --prop name=Caption1 --prop text="Fig. 1. Pressure distribution under fixed inlet conditions." --prop x=1.2cm --prop y=15.9cm --prop width=24cm --prop height=1.2cm --prop font=Calibri --prop size=18 --prop italic=true --prop color=4B5563 --prop fill=none
 ```
 
 Caption text must be concise and source-supported.
 
+Use a colored caption fill only when matching a user-supplied template or existing deck convention, and keep text contrast readable.
+
 ## Charts and Tables
 
-Use `chart` only when chart-ready values and categories are supplied. Run `officecli help pptx chart` before using a chart type or data format that is not already known.
+Use `chart` only when chart-ready values, categories, variable names, and units are supplied. Run `officecli help pptx chart` before using a chart type or data format that is not already known.
 
-Use `table` for compact numeric comparisons, ablation summaries, taxonomies, or method/result matrices. Keep table text readable and avoid dense spreadsheet-like slides.
+Choose the chart type from the analytic task. Prefer direct labels or a nearby legend; do not rely on color alone to encode categories.
+
+Use `table` for compact numeric comparisons, ablation summaries, taxonomies, or method/result matrices. Keep only columns needed for the central message, keep table text readable, and avoid dense spreadsheet-like slides.
 
 ## Formulas
 
@@ -102,6 +130,8 @@ officecli help pptx equation
 ```
 
 If equation generation is uncertain, create a formula text shape, preserve the original LaTeX delimiters, and use a math-friendly font such as `Cambria Math`.
+
+When a formula is the main evidence object, give it the central evidence region and put definitions or assumptions in a nearby `EvidenceAnnotation` shape rather than a distant paragraph.
 
 ## Speaker Notes
 
@@ -124,7 +154,7 @@ OfficeCLI paths are 1-based. Use quoted paths:
 Prefer `@name=` paths for follow-up edits:
 
 ```powershell
-officecli set output.pptx "/slide[1]/shape[@name=MainClaim]" --prop color=0000AA
+officecli set output.pptx "/slide[1]/shape[@name=MainClaim]" --prop color=0B5CAD
 ```
 
 For connectors or cases where `@name=` is unsupported, query IDs first and then use `@id=`.

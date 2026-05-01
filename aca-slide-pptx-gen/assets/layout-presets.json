@@ -1,41 +1,198 @@
 {
   "canvas": {
     "width_cm": 33.87,
-    "height_cm": 19.05
+    "height_cm": 19.05,
+    "safe_margin_cm": 1.0
+  },
+  "colors": {
+    "background": "FFFFFF",
+    "main_text": "111827",
+    "muted_text": "64748B",
+    "primary_emphasis": "0B5CAD",
+    "critical_emphasis": "C2410C",
+    "separator": "1F2937"
+  },
+  "type": {
+    "section_title_pt": 34,
+    "main_claim_pt": 20,
+    "panel_heading_pt": 24,
+    "body_pt": 24,
+    "caption_pt": 18,
+    "minimum_visible_pt": 18
   },
   "header": {
     "section_title": {
+      "name": "SectionTitle",
       "x": "1.2cm",
       "y": "0.8cm",
       "width": "31.47cm",
-      "height": "0.8cm"
+      "height": "1.3cm",
+      "font": "Calibri",
+      "size": "34pt",
+      "bold": true,
+      "color": "111827",
+      "fill": "none"
     },
     "title_rule": {
+      "element": "connector",
+      "shape": "straight",
       "x": "1.2cm",
-      "y": "1.85cm",
+      "y": "2.15cm",
       "width": "31.47cm",
-      "height": "0.04cm"
+      "height": "0cm",
+      "color": "1F2937",
+      "linewidth": "2pt"
     }
   },
-  "content_region": {
-    "x": "1.2cm",
-    "y": "2.35cm",
-    "width": "31.47cm",
-    "height": "15.7cm"
+  "presets": {
+    "oral_light_assertion_evidence": {
+      "purpose": "Default academic oral presentation slide with one central information unit and one dominant evidence object.",
+      "background": "FFFFFF",
+      "regions": {
+        "main_claim": {
+          "name": "MainClaim",
+          "x": "1.2cm",
+          "y": "2.35cm",
+          "width": "31.47cm",
+          "height": "2.8cm",
+          "size": "20pt"
+        },
+        "evidence_visual": {
+          "name": "EvidenceVisual",
+          "x": "1.2cm",
+          "y": "5.45cm",
+          "width": "31.47cm",
+          "height": "10.1cm"
+        },
+        "caption": {
+          "name": "Caption1",
+          "x": "1.2cm",
+          "y": "15.9cm",
+          "width": "24.0cm",
+          "height": "1.2cm",
+          "size": "18pt",
+          "italic": true,
+          "fill": "none"
+        },
+        "qualifier": {
+          "name": "Qualifier",
+          "x": "25.8cm",
+          "y": "15.9cm",
+          "width": "6.87cm",
+          "height": "2.15cm",
+          "size": "18pt"
+        }
+      }
+    },
+    "comparison_direct_label": {
+      "purpose": "Parallel evidence panels with direct labels or near legends.",
+      "background": "FFFFFF",
+      "regions": {
+        "visual_row": {
+          "y": "2.35cm",
+          "height": "9.2cm"
+        },
+        "text_row": {
+          "y": "12.05cm",
+          "height": "6.0cm"
+        }
+      },
+      "columns": {
+        "gap": "0.6cm",
+        "formula": "column_width = (31.47cm - (n - 1) * 0.6cm) / n; column_x = 1.2cm + i * (column_width + 0.6cm)"
+      },
+      "style": {
+        "label_policy": "direct_labels_preferred",
+        "body_size": "24pt",
+        "caption_size": "18pt",
+        "caption_italic": true,
+        "caption_fill": "none"
+      }
+    },
+    "formula_evidence": {
+      "purpose": "Equation-centered academic slide with nearby definitions and source-supported qualifier.",
+      "background": "FFFFFF",
+      "regions": {
+        "main_claim": {
+          "name": "MainClaim",
+          "x": "1.2cm",
+          "y": "2.35cm",
+          "width": "31.47cm",
+          "height": "2.6cm",
+          "size": "20pt"
+        },
+        "central_equation": {
+          "name": "EvidenceVisual",
+          "x": "3.0cm",
+          "y": "5.3cm",
+          "width": "20.5cm",
+          "height": "6.5cm",
+          "size": "30pt",
+          "font": "Cambria Math"
+        },
+        "definitions": {
+          "name": "EvidenceAnnotation1",
+          "x": "24.2cm",
+          "y": "5.3cm",
+          "width": "8.47cm",
+          "height": "6.5cm",
+          "size": "20pt"
+        },
+        "qualifier": {
+          "name": "Qualifier",
+          "x": "1.2cm",
+          "y": "12.8cm",
+          "width": "31.47cm",
+          "height": "5.25cm",
+          "size": "20pt"
+        }
+      }
+    },
+    "table_to_takeaway": {
+      "purpose": "Compact table trimmed to key columns with a single takeaway region.",
+      "background": "FFFFFF",
+      "regions": {
+        "main_claim": {
+          "name": "MainClaim",
+          "x": "1.2cm",
+          "y": "2.35cm",
+          "width": "31.47cm",
+          "height": "2.6cm",
+          "size": "20pt"
+        },
+        "table": {
+          "name": "EvidenceVisual",
+          "x": "1.2cm",
+          "y": "5.2cm",
+          "width": "21.0cm",
+          "height": "10.15cm",
+          "minimum_text_size": "18pt"
+        },
+        "takeaway": {
+          "name": "Qualifier",
+          "x": "23.0cm",
+          "y": "5.2cm",
+          "width": "9.67cm",
+          "height": "10.15cm",
+          "size": "24pt"
+        },
+        "caption": {
+          "name": "Caption1",
+          "x": "1.2cm",
+          "y": "15.75cm",
+          "width": "31.47cm",
+          "height": "2.3cm",
+          "size": "18pt",
+          "italic": true,
+          "fill": "none"
+        }
+      }
+    }
   },
-  "grid_2x2": {
+  "legacy_grid_2x2": {
     "q1": { "x": "1.2cm", "y": "2.35cm", "width": "15.18cm", "height": "7.35cm" },
     "q2": { "x": "17.49cm", "y": "2.35cm", "width": "15.18cm", "height": "7.35cm" },
     "q3": { "x": "1.2cm", "y": "10.7cm", "width": "15.18cm", "height": "7.35cm" },
     "q4": { "x": "17.49cm", "y": "10.7cm", "width": "15.18cm", "height": "7.35cm" }
-  },
-  "colors": {
-    "caption_fill": "FFC000",
-    "caption_text": "000000",
-    "emphasis_blue": "0000AA",
-    "emphasis_red": "DE0000",
-    "main_text": "111111",
-    "muted_text": "4B5563",
-    "separator": "1F2937"
   }
 }

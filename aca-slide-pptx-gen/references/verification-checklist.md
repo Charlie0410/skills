@@ -8,16 +8,26 @@ Before returning the `.pptx`, verify:
 - The slide is 16:9 widescreen.
 - The slide uses a blank custom layout.
 - The section title appears at the upper-left.
-- A horizontal separator appears under the section title.
+- A horizontal separator spans the safe content width under the section title and uses `linewidth=2pt`.
+- The slide is organized around one central information unit.
+- One dominant evidence object carries the slide unless the user requested a comparison layout.
+- Compact annotations connect the evidence to the central message.
 - Chinese text uses `微软雅黑` or `Microsoft YaHei`.
 - English text uses `Calibri`.
-- Captions use fill `FFC000` and text `000000`.
-- Emphasis colors `0000AA` and `DE0000` are used only where justified.
+- Visible text is `18pt+`.
+- Normal body text is preferably `24pt+`.
+- Captions are `18pt+`, italic, source-supported, and have no background fill by default.
+- Emphasis colors are used only where justified and never as the sole semantic encoding.
+- Normal text/background contrast is at least `4.5:1`; large text and essential graphics are at least `3:1`.
+- Charts have chart-ready data, complete variable names, units, and direct labels or near legends.
+- Tables keep only columns needed for the central message.
 - LaTeX formulas are preserved or converted faithfully.
+- Central formulas are readable and have nearby definitions or assumptions.
 - Unsupported facts, figures, data, formulas, and labels were not invented.
 - All visible content stays inside the `33.87cm x 19.05cm` canvas.
 - Text is readable and not clipped.
 - Every real picture has alt text.
+- Important embedded text in pictures is repeated in alt text or nearby accessible text.
 - Every figure placeholder is explicitly labeled as a placeholder.
 - Speaker notes exist and are source-supported.
 
@@ -37,6 +47,8 @@ officecli validate <output.pptx>
 officecli view <output.pptx> issues
 officecli view <output.pptx> annotated
 officecli view <output.pptx> text
+officecli query <output.pptx> shape
+officecli query <output.pptx> connector
 officecli view <output.pptx> html
 officecli query <output.pptx> "picture:no-alt"
 ```
@@ -48,6 +60,8 @@ If any check reports a real issue, fix the file and rerun the checklist.
 `Slide has no title` can be acceptable for a custom `layout=blank` slide because the title is a named shape rather than a PowerPoint title placeholder.
 
 Chart schema warnings may be OfficeCLI-version-specific. Treat them as acceptable only after checking that the chart renders correctly in `view html` and the target presentation viewer.
+
+Density warnings, missing direct chart labels, sparse shape naming, or long paragraph warnings may require human review. Fix them when they indicate an actual readability or source-fidelity problem.
 
 ## Final Response
 
