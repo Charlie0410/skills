@@ -1,0 +1,41 @@
+{
+  "canvas": {
+    "width_cm": 33.87,
+    "height_cm": 19.05
+  },
+  "header": {
+    "section_title": {
+      "x": "1.2cm",
+      "y": "0.8cm",
+      "width": "31.47cm",
+      "height": "0.8cm"
+    },
+    "title_rule": {
+      "x": "1.2cm",
+      "y": "1.85cm",
+      "width": "31.47cm",
+      "height": "0.04cm"
+    }
+  },
+  "content_region": {
+    "x": "1.2cm",
+    "y": "2.35cm",
+    "width": "31.47cm",
+    "height": "15.7cm"
+  },
+  "grid_2x2": {
+    "q1": { "x": "1.2cm", "y": "2.35cm", "width": "15.18cm", "height": "7.35cm" },
+    "q2": { "x": "17.49cm", "y": "2.35cm", "width": "15.18cm", "height": "7.35cm" },
+    "q3": { "x": "1.2cm", "y": "10.7cm", "width": "15.18cm", "height": "7.35cm" },
+    "q4": { "x": "17.49cm", "y": "10.7cm", "width": "15.18cm", "height": "7.35cm" }
+  },
+  "colors": {
+    "caption_fill": "FFC000",
+    "caption_text": "000000",
+    "emphasis_blue": "0000AA",
+    "emphasis_red": "DE0000",
+    "main_text": "111111",
+    "muted_text": "4B5563",
+    "separator": "1F2937"
+  }
+}

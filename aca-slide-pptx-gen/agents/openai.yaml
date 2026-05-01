@@ -1,0 +1,4 @@
+interface:
+  display_name: "Academic PPTX Slide"
+  short_description: "Generate academic PPTX content slides"
+  default_prompt: "Use $aca-slide-pptx-gen to create a one-slide academic PPTX from my research content."

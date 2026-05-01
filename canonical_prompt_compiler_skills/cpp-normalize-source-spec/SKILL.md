@@ -69,7 +69,17 @@ description: Normalize a free-form task description or CPP SOURCE_SPEC into a CP
 
 ## Output Contract
 
-1. 只返回一个块：
+默认不要只把制品贴在对话框中。先将规范化制品写入文件，再在对话中返回写入路径和简短状态。
+
+写入位置与命名：
+
+- 若用户提供了主要输入文件路径，将输出写入该输入文件的同级文件夹。
+- 若用户明确提供输出路径，使用用户指定路径。
+- 若只有对话输入而没有文件路径，写入当前工作目录。
+- 默认文件名为 `<source-stem>.normalized-spec.md`；没有来源文件名时使用 `normalized-spec.md`。
+- 如果目标文件已存在，先确认它是同一阶段的旧制品再覆盖；若无法确认，使用带时间戳的唯一文件名。
+
+文件内容只包含一个块：
 
 ```text
 [NORMALIZED_SPEC]
@@ -93,15 +103,17 @@ OPTIONAL_EXAMPLES:
 OPEN_QUESTIONS:
 ```
 
-2. 对单值字段使用单行值；对多项字段使用平铺列表。
-3. 对空但非必需字段写 `none`；对必需但未定字段写精确占位符。
-4. 在 `OPEN_QUESTIONS` 中保留类型化残余状态，使用以下前缀：
+对话最终回复只列出输出文件路径、是否成功写入、以及关键未决项数量或 `none`。除非用户明确要求，不要在对话中粘贴完整 `[NORMALIZED_SPEC]`。
+
+1. 对单值字段使用单行值；对多项字段使用平铺列表。
+2. 对空但非必需字段写 `none`；对必需但未定字段写精确占位符。
+3. 在 `OPEN_QUESTIONS` 中保留类型化残余状态，使用以下前缀：
    - `MISSING:`
    - `ASSUMPTION:`
    - `CONFLICT:`
    - `SPLIT:`
-5. 保持 `SOURCE_SPEC` 中已有的术语、符号、单位、命名和引文风格一致。
-6. 不要输出隐藏推理，不要附加解释性散文，不要顺手把结果升级成编译后的 prompt。
+4. 保持 `SOURCE_SPEC` 中已有的术语、符号、单位、命名和引文风格一致。
+5. 不要输出隐藏推理，不要附加解释性散文，不要顺手把结果升级成编译后的 prompt。
 
 ## Guardrails
 

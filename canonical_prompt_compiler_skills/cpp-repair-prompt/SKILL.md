@@ -55,7 +55,17 @@ Patch a compiled CPP draft prompt and do only `REPAIR`. Consume the current `SOU
 
 ## Output Contract
 
-Return only these two blocks, in this fixed order:
+Do not default to pasting the repaired artifacts only in chat. Write the REPAIR-stage artifact to a file first, then respond in chat with the written path and concise status.
+
+Write location and naming:
+
+- If the user provided a primary input file, write the output artifact into that file's same directory.
+- If the user provided an explicit output path, use that path.
+- If the input exists only in chat, write into the current working directory.
+- Default filename: `<source-stem>.repaired-prompt.md`; if no source filename exists, use `repaired-prompt.md`.
+- If the target already exists, overwrite only when it is clearly a prior REPAIR-stage artifact or the user requested that path. Otherwise use a timestamped unique filename.
+
+The file content must contain only these two blocks, in this fixed order:
 
 ```text
 [REPAIR_SUMMARY]
@@ -66,10 +76,12 @@ UNRESOLVED_ITEMS:
 ...
 ```
 
+The final chat response must list the output file path, confirm the write, and summarize unresolved items. Do not paste the full `[REPAIR_SUMMARY]` or `[REPAIRED_PROMPT]` unless the user explicitly asks.
+
 - Write `none` for empty but lawful slots.
 - Keep labels and field order exactly aligned with `compiler.md`.
 - Do not emit `[NORMALIZED_SPEC]`, `[COMPILATION_DIAGNOSTICS]`, `[COMPILED_PROMPT]`, or `[VERIFY_REPORT]`.
-- Do not append explanatory prose before or after the two blocks.
+- Do not append explanatory prose before or after the two blocks inside the output file.
 
 ## Guardrails
 

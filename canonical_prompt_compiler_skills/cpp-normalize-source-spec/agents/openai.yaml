@@ -1,4 +1,4 @@
 interface:
   display_name: "CPP Normalize"
   short_description: "Normalize SOURCE_SPEC into NORMALIZED_SPEC"
-  default_prompt: "Use $cpp-normalize-source-spec to rewrite this SOURCE_SPEC into a CPP NORMALIZED_SPEC."
+  default_prompt: "Use $cpp-normalize-source-spec to rewrite this SOURCE_SPEC into a CPP NORMALIZED_SPEC and write the artifact to a same-directory file."

@@ -52,7 +52,17 @@ Evaluate a compiled CPP prompt artifact and do only `VERIFY`. Read the current `
 
 ## Output Contract
 
-Return only this block, in this exact order:
+Do not default to pasting the verification report only in chat. Write the VERIFY-stage report to a file first, then respond in chat with the written path and concise status.
+
+Write location and naming:
+
+- If the user provided a primary input file, write the report into that file's same directory.
+- If the user provided an explicit output path, use that path.
+- If the input exists only in chat, write into the current working directory.
+- Default filename: `<source-stem>.verify-report.md`; if no source filename exists, use `verify-report.md`.
+- If the target already exists, overwrite only when it is clearly a prior VERIFY-stage artifact or the user requested that path. Otherwise use a timestamped unique filename.
+
+The file content must contain only this block, in this exact order:
 
 ```text
 [VERIFY_REPORT]
@@ -66,9 +76,11 @@ UNSAFE_ASSUMPTIONS:
 REPAIR_PRIORITY:
 ```
 
+The final chat response must list the output file path, confirm the write, and report `STATUS`. Do not paste the full `[VERIFY_REPORT]` unless the user explicitly asks.
+
 - Write `none` for empty but lawful slots.
 - Keep the field order exactly aligned with `compiler.md`.
-- Do not append extra explanatory prose before or after the report.
+- Do not append extra explanatory prose before or after the report inside the output file.
 - Do not emit `[NORMALIZED_SPEC]`, `[COMPILATION_DIAGNOSTICS]`, `[COMPILED_PROMPT]`, `[REPAIR_SUMMARY]`, or `[REPAIRED_PROMPT]`.
 
 ## Guardrails
